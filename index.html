@@ -11,7 +11,8 @@
     --bg: #050505;
     --neon-green: #00ff41;
     --neon-dim: #008f11;
-    --neon-red: #ff3333;
+    --neon-red: #ff0055;
+    --neon-yellow: #ffe600;
     --font: 'Share Tech Mono', monospace;
   }
 
@@ -44,17 +45,24 @@
     z-index: 999; pointer-events: none;
   }
 
-  /* Frosted Glass Container to keep text readable over Matrix rain */
+  /* Frosted Glass Container */
   .container {
     width: 100%; max-width: 600px;
     position: relative; z-index: 10;
     background: rgba(5, 5, 5, 0.85);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--neon-dim);
     padding: 30px;
     border-radius: 4px;
-    box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+    box-shadow: 0 0 25px rgba(0, 255, 65, 0.15);
+    max-height: 95vh;
+    overflow-y: auto;
   }
+  
+  /* Scrollbar styles for the container */
+  .container::-webkit-scrollbar { width: 8px; }
+  .container::-webkit-scrollbar-track { background: #000; }
+  .container::-webkit-scrollbar-thumb { background: var(--neon-dim); }
 
   /* Screens */
   #store-screen, #success-screen { display: none; }
@@ -77,9 +85,12 @@
     width: 100%; background: transparent; border: 1px solid var(--neon-dim);
     color: var(--neon-green); font-family: var(--font); font-size: 16px;
     padding: 15px; cursor: pointer; letter-spacing: 1px; transition: 0.3s;
-    margin-top: 10px; text-transform: uppercase;
+    margin-top: 10px; text-transform: uppercase; font-weight: bold;
   }
   button:hover { background: rgba(0, 255, 65, 0.1); border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
+
+  button.btn-accent { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+  button.btn-accent:hover { background: rgba(255, 230, 0, 0.1); box-shadow: 0 0 15px rgba(255, 230, 0, 0.4); }
 
   .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
   .radio-label {
@@ -92,6 +103,7 @@
   .radio-label input:checked + div { color: var(--bg); }
   .radio-label:has(input:checked) { background: var(--neon-green); color: var(--bg); box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); border-color: var(--neon-green); }
 
+  /* Payment & Receipt Boxes */
   .receipt {
     border: 1px dashed var(--neon-dim); padding: 15px; margin-bottom: 20px;
     background: rgba(0, 255, 65, 0.05); font-size: 14px;
@@ -99,22 +111,30 @@
   .receipt-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
   .receipt-total { border-top: 1px dashed var(--neon-dim); padding-top: 10px; margin-top: 10px; font-weight: bold; font-size: 18px; color: #fff; text-shadow: 0 0 5px var(--neon-green); }
 
+  .payment-box {
+    border: 2px dashed var(--neon-red); padding: 15px; margin-bottom: 20px;
+    background: rgba(255, 0, 85, 0.05); font-size: 14px; color: #fff;
+  }
+  .payment-box h3 { color: var(--neon-red); margin-top: 0; font-size: 16px; text-shadow: 0 0 8px rgba(255,0,85,0.4); }
+  .bkash-number { font-size: 22px; color: var(--neon-yellow); letter-spacing: 2px; margin: 10px 0; font-weight: bold; text-shadow: 0 0 10px rgba(255,230,0,0.5); display: block; text-align: center;}
+
   .alert-box { border: 1px solid var(--neon-dim); padding: 15px; color: var(--neon-dim); font-size: 12px; margin-top: 30px; background: #000; }
   .alert-box strong { color: var(--neon-green); }
 
+  /* UI Sticker CSS */
   .arcade-sticker {
-    width: 120px; height: 120px; margin: 0 auto 30px auto;
+    width: 100px; height: 100px; margin: 0 auto 20px auto;
     background: linear-gradient(135deg, #4a2e15 0%, #311c09 100%);
-    border: 4px solid var(--neon-green);
-    box-shadow: inset -5px -5px 0px rgba(0,0,0,0.5), inset 5px 5px 0px rgba(255,255,255,0.2), 0 0 20px var(--neon-green);
+    border: 3px solid var(--neon-yellow);
+    box-shadow: inset -5px -5px 0px rgba(0,0,0,0.5), inset 5px 5px 0px rgba(255,255,255,0.2), 0 0 30px var(--neon-yellow);
     position: relative; image-rendering: pixelated; animation: float 3s ease-in-out infinite;
   }
   .arcade-sticker::before {
-    content: ""; position: absolute; top: 20px; left: 20px; width: 10px; height: 10px; background: #1a0f05;
-    box-shadow: 40px 10px 0 #1a0f05, 10px 40px 0 #1a0f05, 60px 50px 0 #1a0f05, 30px 70px 0 #1a0f05;
+    content: ""; position: absolute; top: 15px; left: 15px; width: 8px; height: 8px; background: #1a0f05;
+    box-shadow: 30px 10px 0 #1a0f05, 10px 30px 0 #1a0f05, 50px 40px 0 #1a0f05, 20px 60px 0 #1a0f05;
   }
   .arcade-sticker::after {
-    content: ""; position: absolute; top: 10px; right: 10px; width: 15px; height: 15px; background: rgba(255,255,255,0.8); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    content: ""; position: absolute; top: 8px; right: 8px; width: 12px; height: 12px; background: rgba(255,255,255,0.8); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
   @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
@@ -186,17 +206,27 @@
       <div class="receipt">
         <div class="receipt-row"><span>UNIT COST:</span> <span id="display-unit">250 TK</span></div>
         <div class="receipt-row"><span>WHOLESALE APPLIED:</span> <span id="display-wholesale" style="color:var(--neon-red)">NO</span></div>
-        <div class="receipt-total">TOTAL: <span id="display-total">250</span> TK</div>
+        <div class="receipt-total">TOTAL TO PAY: <span id="display-total">250</span> TK</div>
         <input type="hidden" id="sheet-total" name="Total Price">
       </div>
 
+      <!-- MANDATORY BKASH PAYMENT GATEWAY -->
+      <div class="payment-box">
+        <h3>🚨 MANDATORY PRE-PAYMENT PROTOCOL</h3>
+        <p style="color:#ccc; margin-bottom:5px; font-size:12px;">To complete this transmission, you must Send Money to the Syndicate Bkash node before submitting:</p>
+        <span class="bkash-number">01961515240</span>
+        
+        <label style="color:var(--neon-red); margin-top:15px;">> ENTER BKASH TRANSACTION ID *</label>
+        <input type="text" id="trx-id" name="Transaction_ID" placeholder="e.g. 9J6A8XYZ2" required style="border-color:var(--neon-red);">
+      </div>
+
       <div class="input-group">
-        <label>DROP COORDINATES (DELIVERY INFO)</label>
+        <label>DROP COORDINATES (DELIVERY INFO) *</label>
         <textarea name="Address" rows="3" placeholder="Enter secure drop location..." required></textarea>
       </div>
 
       <div class="input-group">
-        <label>COMM-LINK (PHONE)</label>
+        <label>COMM-LINK (PHONE) *</label>
         <input type="text" name="Phone" placeholder="+8801XXXXXXXXX" required>
       </div>
 
@@ -205,16 +235,25 @@
   </div>
 
   <!-- SUCCESS SCREEN -->
-  <div id="success-screen" style="text-align: center; padding-top: 40px;">
+  <div id="success-screen" style="text-align: center; padding-top: 20px;">
     <div class="arcade-sticker"></div>
-    <h1>TRANSMISSION SUCCESS</h1>
-    <p>Your order has been encrypted and sent to the syndicate.</p>
-    <div class="receipt" style="text-align: left; display: inline-block; margin-top: 20px;">
-      <strong>STATUS:</strong> PENDING DISPATCH<br>
-      <strong>ARCADE REWARD:</strong> BROWNIE STICKER UNLOCKED
+    <h1 style="color:var(--neon-yellow);">TRANSMISSION SUCCESS</h1>
+    <p>Your order and payment hash have been verified by the mainframe.</p>
+    
+    <div class="receipt" style="text-align: left; display: inline-block; margin-top: 10px; border-color:var(--neon-yellow); box-shadow: 0 0 10px rgba(255,230,0,0.1);">
+      <strong style="color:var(--neon-yellow);">STATUS:</strong> PAYMENT VERIFIED / DISPATCH QUEUED<br>
+      <strong style="color:var(--neon-yellow);">ACHIEVEMENT:</strong> ARCADE CARD UNLOCKED
     </div>
-    <br>
-    <button onclick="location.reload()" style="max-width: 300px;">NEW SESSION</button>
+    
+    <br><br>
+    
+    <!-- DOWNLOAD REWARD BUTTON -->
+    <button onclick="downloadArcadeCard()" class="btn-accent" style="margin-bottom:15px; font-size: 18px;">
+      <svg style="vertical-align: middle; margin-right: 8px;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      DOWNLOAD ARCADE CARD
+    </button>
+
+    <button onclick="location.reload()" style="max-width: 300px; border-color: #444; color: #888;">TERMINATE SESSION</button>
   </div>
 
 </div>
@@ -259,14 +298,13 @@
   }
 
   setInterval(drawMatrix, 35);
-
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
-  // ---------------------------------
 
-  const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+  // --- STORE LOGIC ---
+  const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1554195679264641044/8HhkCgTn9HKPFyGWqnyS5RgI1tAF9EWB5J3dHn33dklmF6dUtVMdJz1IGVa8Cz_vxl6Y';
 
   function bootConsole() {
     const codename = document.getElementById('login-codename').value.trim();
@@ -304,25 +342,47 @@
     document.getElementById('sheet-total').value = total + " TK";
   }
 
+  // --- DISCORD TRANSMISSION LOGIC ---
   document.getElementById('orderForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     btn.innerText = "ENCRYPTING & TRANSMITTING...";
     document.getElementById('store-screen').classList.add('loading');
 
-    const formData = new FormData(this);
-    const params = new URLSearchParams();
-    for (const pair of formData.entries()) {
-      params.append(pair[0], pair[1]);
-    }
+    const codename = document.getElementById('sheet-codename').value;
+    const size = document.querySelector('input[name="Size"]:checked').value;
+    const qty = document.getElementById('order-qty').value;
+    const total = document.getElementById('sheet-total').value;
+    const trxId = document.getElementById('trx-id').value;
+    const phone = document.querySelector('input[name="Phone"]').value;
+    const address = document.querySelector('textarea[name="Address"]').value;
 
-    fetch(SCRIPT_URL, {
+    const payload = {
+      username: "MAINFRAME TERMINAL",
+      embeds: [{
+        title: "🚨 NEW SYNDICATE ORDER + PAYMENT",
+        color: 65280, // Matrix green
+        fields: [
+          { name: "Agent Codename", value: `\`${codename}\``, inline: true },
+          { name: "Hardware Size", value: `\`${size}\``, inline: true },
+          { name: "Quantity", value: `\`${qty}\``, inline: true },
+          { name: "Total Paid", value: `\`${total}\``, inline: true },
+          { name: "Bkash TRX ID", value: `**${trxId}**`, inline: true },
+          { name: "Comm-Link (Phone)", value: `\`${phone}\``, inline: true },
+          { name: "Drop Coordinates", value: `\`\`\`\n${address}\n\`\`\``, inline: false }
+        ],
+        footer: { text: "Brownie Syndicate Secure Network" },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    fetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString()
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     })
-    .then(() => {
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
       document.getElementById('store-screen').classList.remove('loading');
       document.getElementById('store-screen').style.display = 'none';
       document.getElementById('success-screen').style.display = 'block';
@@ -333,6 +393,70 @@
       document.getElementById('store-screen').classList.remove('loading');
     });
   });
+
+  // --- SVG CARD GENERATOR & DOWNLOAD ENGINE ---
+  function downloadArcadeCard() {
+    // Generate random 8-character ID
+    const sysId = Math.random().toString(36).substring(2, 10).toUpperCase();
+    
+    // Procedural SVG Code
+    const svgCode = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="400" height="550" style="background:#0a0a0a; font-family:Courier, monospace;">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffe600" stroke-width="0.5" opacity="0.15"/>
+        </pattern>
+        <linearGradient id="brownieGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5c3817"/>
+          <stop offset="100%" stop-color="#261608"/>
+        </linearGradient>
+      </defs>
+      
+      <!-- Background -->
+      <rect width="100%" height="100%" fill="url(#grid)" />
+      
+      <!-- Outer/Inner Borders -->
+      <rect x="10" y="10" width="380" height="530" fill="none" stroke="#ff0055" stroke-width="4" stroke-dasharray="10 5" />
+      <rect x="20" y="20" width="360" height="510" fill="none" stroke="#00ff41" stroke-width="2" />
+      
+      <!-- Header Text -->
+      <text x="200" y="70" fill="#00ff41" font-size="28" text-anchor="middle" font-weight="bold" letter-spacing="2">SYNDICATE ACCESS</text>
+      <text x="200" y="100" fill="#ffe600" font-size="14" text-anchor="middle" letter-spacing="1">&gt;&gt; ARCADE TIER UNLOCKED &lt;&lt;</text>
+      
+      <!-- Center Pixel Brownie Graphic -->
+      <g transform="translate(110, 160)">
+        <rect x="0" y="0" width="180" height="180" fill="url(#brownieGrad)" stroke="#ffe600" stroke-width="4"/>
+        <rect x="20" y="30" width="25" height="25" fill="#140b04" />
+        <rect x="120" y="50" width="25" height="25" fill="#140b04" />
+        <rect x="60" y="120" width="25" height="25" fill="#140b04" />
+        <rect x="130" y="130" width="25" height="25" fill="#140b04" />
+        <polygon points="140,15 155,15 140,30" fill="#fff" opacity="0.8"/>
+      </g>
+      
+      <!-- Footer Text -->
+      <text x="200" y="440" fill="#ff0055" font-size="18" text-anchor="middle" font-weight="bold">OFFICIAL DROP RECEIVER</text>
+      <text x="200" y="470" fill="#00ff41" font-size="14" text-anchor="middle">AUTHORIZATION: VERIFIED</text>
+      
+      <!-- Unique System ID Badge -->
+      <rect x="110" y="490" width="180" height="25" fill="#ffe600" />
+      <text x="200" y="507" fill="#000" font-size="14" text-anchor="middle" font-weight="bold">ID: SYS-${sysId}</text>
+    </svg>`;
+
+    // Convert SVG string to a Blob URL
+    const blob = new Blob([svgCode], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    
+    // Create an invisible link and trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Brownie-Syndicate-Card-${sysId}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up memory
+    URL.revokeObjectURL(url);
+  }
 </script>
 </body>
 </html>
