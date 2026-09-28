@@ -22,9 +22,18 @@
     color: var(--neon-green);
     font-family: var(--font);
     margin: 0; padding: 20px;
-    display: flex; justify-content: center;
+    display: flex; justify-content: center; align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
+  }
+
+  /* Matrix Canvas Background */
+  #matrix-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* Scanline Overlay */
@@ -35,19 +44,25 @@
     z-index: 999; pointer-events: none;
   }
 
+  /* Frosted Glass Container to keep text readable over Matrix rain */
   .container {
     width: 100%; max-width: 600px;
     position: relative; z-index: 10;
+    background: rgba(5, 5, 5, 0.85);
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--neon-dim);
+    padding: 30px;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
   }
 
   /* Screens */
   #store-screen, #success-screen { display: none; }
 
-  h1 { font-size: 24px; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-green); margin-bottom: 30px; }
+  h1 { font-size: 24px; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-green); margin-bottom: 30px; margin-top: 0; }
   h2 { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
   p { font-size: 14px; color: var(--neon-dim); margin-bottom: 20px; }
 
-  /* Inputs & Buttons matching the screenshot */
   .input-group { margin-bottom: 20px; }
   label { display: block; font-size: 12px; margin-bottom: 5px; color: var(--neon-dim); }
   
@@ -66,11 +81,10 @@
   }
   button:hover { background: rgba(0, 255, 65, 0.1); border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
 
-  /* Custom Radio Buttons for Product Selection */
   .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
   .radio-label {
     display: flex; flex-direction: column; text-align: center;
-    border: 1px solid #1a4a28; padding: 15px; cursor: pointer; transition: 0.3s;
+    border: 1px solid #1a4a28; padding: 15px; cursor: pointer; transition: 0.3s; background: #000;
   }
   .radio-label input { display: none; }
   .radio-label span.title { font-size: 18px; font-weight: bold; }
@@ -78,7 +92,6 @@
   .radio-label input:checked + div { color: var(--bg); }
   .radio-label:has(input:checked) { background: var(--neon-green); color: var(--bg); box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); border-color: var(--neon-green); }
 
-  /* Receipt Box */
   .receipt {
     border: 1px dashed var(--neon-dim); padding: 15px; margin-bottom: 20px;
     background: rgba(0, 255, 65, 0.05); font-size: 14px;
@@ -86,29 +99,21 @@
   .receipt-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
   .receipt-total { border-top: 1px dashed var(--neon-dim); padding-top: 10px; margin-top: 10px; font-weight: bold; font-size: 18px; color: #fff; text-shadow: 0 0 5px var(--neon-green); }
 
-  /* Alert Box from Screenshot */
-  .alert-box { border: 1px solid var(--neon-dim); padding: 15px; color: var(--neon-dim); font-size: 12px; margin-top: 30px; }
+  .alert-box { border: 1px solid var(--neon-dim); padding: 15px; color: var(--neon-dim); font-size: 12px; margin-top: 30px; background: #000; }
   .alert-box strong { color: var(--neon-green); }
 
-  /* 8-Bit Brownie Sticker */
   .arcade-sticker {
     width: 120px; height: 120px; margin: 0 auto 30px auto;
-    background: 
-      linear-gradient(135deg, #4a2e15 0%, #311c09 100%);
+    background: linear-gradient(135deg, #4a2e15 0%, #311c09 100%);
     border: 4px solid var(--neon-green);
-    box-shadow: 
-      inset -5px -5px 0px rgba(0,0,0,0.5),
-      inset 5px 5px 0px rgba(255,255,255,0.2),
-      0 0 20px var(--neon-green);
-    position: relative;
-    image-rendering: pixelated;
-    animation: float 3s ease-in-out infinite;
+    box-shadow: inset -5px -5px 0px rgba(0,0,0,0.5), inset 5px 5px 0px rgba(255,255,255,0.2), 0 0 20px var(--neon-green);
+    position: relative; image-rendering: pixelated; animation: float 3s ease-in-out infinite;
   }
-  .arcade-sticker::before { /* Choco Chips */
+  .arcade-sticker::before {
     content: ""; position: absolute; top: 20px; left: 20px; width: 10px; height: 10px; background: #1a0f05;
     box-shadow: 40px 10px 0 #1a0f05, 10px 40px 0 #1a0f05, 60px 50px 0 #1a0f05, 30px 70px 0 #1a0f05;
   }
-  .arcade-sticker::after { /* Glint */
+  .arcade-sticker::after {
     content: ""; position: absolute; top: 10px; right: 10px; width: 15px; height: 15px; background: rgba(255,255,255,0.8); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   }
   @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
@@ -117,6 +122,9 @@
 </style>
 </head>
 <body>
+
+<!-- Matrix Digital Rain Canvas -->
+<canvas id="matrix-bg"></canvas>
 
 <div class="container">
 
@@ -148,7 +156,6 @@
     <h1>>_ PROCUREMENT PORTAL</h1>
     
     <form id="orderForm">
-      <!-- Hidden fields to pass the fake auth data to the sheet -->
       <input type="hidden" id="sheet-codename" name="Codename">
       
       <div class="input-group">
@@ -213,7 +220,52 @@
 </div>
 
 <script>
-  // Replace this with your new Google Apps Script Web App URL
+  // --- MATRIX DIGITAL RAIN LOGIC ---
+  const canvas = document.getElementById('matrix-bg');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+  const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const nums = '0123456789';
+  const alphabet = katakana + latin + nums;
+
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = [];
+
+  for (let x = 0; x < columns; x++) {
+    drops[x] = 1;
+  }
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff41'; // Matrix Green
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 35);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+  // ---------------------------------
+
   const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
 
   function bootConsole() {
@@ -222,9 +274,7 @@
       alert("HANDSHAKE REJECTED: Codename required.");
       return;
     }
-    // Set codename for sheet
     document.getElementById('sheet-codename').value = codename;
-    // Transition UI
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('store-screen').style.display = 'block';
     calcPrice();
@@ -237,7 +287,6 @@
     let unitPrice = 0;
     let wholesale = false;
 
-    // Pricing Logic
     if (size === '4gm') {
       if (qty >= 5) { unitPrice = 200; wholesale = true; } 
       else { unitPrice = 250; }
@@ -248,13 +297,10 @@
 
     const total = unitPrice * qty;
 
-    // Update UI
     document.getElementById('display-unit').innerText = unitPrice + " TK";
     document.getElementById('display-wholesale').innerText = wholesale ? "YES" : "NO";
     document.getElementById('display-wholesale').style.color = wholesale ? "var(--neon-green)" : "var(--neon-red)";
     document.getElementById('display-total').innerText = total;
-    
-    // Update Hidden Field for Sheet
     document.getElementById('sheet-total').value = total + " TK";
   }
 
