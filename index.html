@@ -152,11 +152,11 @@
   <div id="auth-screen">
     <h1>>_ CYBER DECK</h1>
     <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> SECURE DECK HANDSHAKE</h2>
-    <p>Enter a unique codename and authorization passkey.</p>
+    <p>Enter any codename and the secure passkey.</p>
     
     <div class="input-group">
-      <label>DECK CODENAME</label>
-      <input type="text" id="login-codename" placeholder="> decket_01" autocomplete="off">
+      <label>AGENT CODENAME</label>
+      <input type="text" id="login-codename" placeholder="> random_name" autocomplete="off">
     </div>
     
     <div class="input-group">
@@ -199,7 +199,7 @@
       </div>
 
       <div class="input-group">
-        <label>QUANTITY (MIN WHOLESALE: 5)</label>
+        <label>QUANTITY (5+ FOR WHOLESALE PRICE)</label>
         <input type="number" id="order-qty" name="Quantity" value="1" min="1" required oninput="calcPrice()">
       </div>
 
@@ -218,6 +218,11 @@
         
         <label style="color:var(--neon-red); margin-top:15px;">> ENTER BKASH TRANSACTION ID *</label>
         <input type="text" id="trx-id" name="Transaction_ID" placeholder="e.g. 9J6A8XYZ2" required style="border-color:var(--neon-red);">
+      </div>
+
+      <div class="input-group">
+        <label>REAL NICKNAME (RECEIVER NAME) *</label>
+        <input type="text" id="order-name" name="Receiver_Name" placeholder="Enter target identity..." required>
       </div>
 
       <div class="input-group">
@@ -303,15 +308,26 @@
     canvas.height = window.innerHeight;
   });
 
-  // --- STORE LOGIC ---
+  // --- AUTH LOGIC ---
   const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1554195679264641044/8HhkCgTn9HKPFyGWqnyS5RgI1tAF9EWB5J3dHn33dklmF6dUtVMdJz1IGVa8Cz_vxl6Y';
 
   function bootConsole() {
     const codename = document.getElementById('login-codename').value.trim();
-    if(!codename) {
-      alert("HANDSHAKE REJECTED: Codename required.");
+    const passkey = document.getElementById('login-passkey').value.trim();
+    
+    // Check missing fields
+    if(!codename || !passkey) {
+      alert("HANDSHAKE REJECTED: Codename and Passkey required.");
       return;
     }
+
+    // Check strict passkey
+    if (passkey !== "420") {
+      alert("HANDSHAKE REJECTED: Invalid Authorization Key.");
+      return;
+    }
+
+    // If passed, enter store
     document.getElementById('sheet-codename').value = codename;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('store-screen').style.display = 'block';
@@ -345,25 +361,36 @@
   // --- DISCORD TRANSMISSION LOGIC ---
   document.getElementById('orderForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    // Check if quantity is less than 5 and warn the user
+    const qty = parseInt(document.getElementById('order-qty').value) || 0;
+    if (qty < 5) {
+      const proceed = confirm("SYSTEM WARNING:\n\nYou have selected less than 5 units. Wholesale pricing has been disabled and standard pricing is applied.\n\nDo you want to proceed with this order?");
+      if (!proceed) {
+        return; // Stop form submission so they can edit the quantity
+      }
+    }
+
     const btn = document.getElementById('submitBtn');
     btn.innerText = "ENCRYPTING & TRANSMITTING...";
     document.getElementById('store-screen').classList.add('loading');
 
     const codename = document.getElementById('sheet-codename').value;
+    const receiverName = document.getElementById('order-name').value;
     const size = document.querySelector('input[name="Size"]:checked').value;
-    const qty = document.getElementById('order-qty').value;
     const total = document.getElementById('sheet-total').value;
     const trxId = document.getElementById('trx-id').value;
     const phone = document.querySelector('input[name="Phone"]').value;
     const address = document.querySelector('textarea[name="Address"]').value;
 
     const payload = {
+      content: "@everyone 🚨 NEW SYNDICATE ORDER DETECTED",
       username: "MAINFRAME TERMINAL",
       embeds: [{
-        title: "🚨 NEW SYNDICATE ORDER + PAYMENT",
         color: 65280, // Matrix green
         fields: [
           { name: "Agent Codename", value: `\`${codename}\``, inline: true },
+          { name: "Real Nickname", value: `\`${receiverName}\``, inline: true },
           { name: "Hardware Size", value: `\`${size}\``, inline: true },
           { name: "Quantity", value: `\`${qty}\``, inline: true },
           { name: "Total Paid", value: `\`${total}\``, inline: true },
